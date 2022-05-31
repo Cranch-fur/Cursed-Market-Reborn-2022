@@ -75,7 +75,11 @@ namespace Cursed_Market_Reborn
             }));
 
         }
-        protected private void Form1_FormClosing(object sender, FormClosingEventArgs e) => FiddlerCore.Stop();
+        protected private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try { FiddlerCore.Stop(); }
+            catch { WinReg.DisableProxy(); }
+        }
         private void Form1_Handle_Tray(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)

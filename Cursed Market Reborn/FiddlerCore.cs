@@ -56,18 +56,8 @@ namespace Cursed_Market_Reborn
         }
         public static void Stop()
         {
-            try
-            {
-                FiddlerApplication.Shutdown();
-            }
-            catch { }
-
-            try
-            {
-                WinReg.DisableProxy();
-            }
-            catch { }
-
+            FiddlerApplication.Shutdown();
+            WinReg.DisableProxy();
         }
 
 
