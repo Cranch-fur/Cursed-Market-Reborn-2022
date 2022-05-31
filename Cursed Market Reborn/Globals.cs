@@ -10,7 +10,7 @@ namespace Cursed_Market_Reborn
     {
         ///////////////////////////////// => High Priority Variables
         public static readonly string SelfExecutableName = AppDomain.CurrentDomain.FriendlyName;
-        public const string OfflineVersion = "4001";
+        public const string OfflineVersion = "4002";
         public static DateTime NETDateTime { get; private set; }
 
 

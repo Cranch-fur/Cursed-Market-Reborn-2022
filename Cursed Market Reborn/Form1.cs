@@ -294,7 +294,7 @@ namespace Cursed_Market_Reborn
             {
                 if (Messaging.ShowDialog($"New Version Of Cursed Market is Available! Download It?\nCurrent Version: {Globals.OfflineVersion}\nLatest Version: {json["onlineVersion"]}", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    var download = Networking.Request.Download_Async((string)json["Download"], Networking.Utilities.Windows.SE_WinFolder.Downloads).Result;
+                    var download = Networking.Request.Download((string)json["Download"], Networking.Utilities.Windows.SE_WinFolder.Downloads);
                     if (download.Item1 == false)
                     {
                         if (Messaging.ShowDialog("Failed To Download Latest Cursed Market Version!\nShall We Try To Use Legacy Download Method?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
