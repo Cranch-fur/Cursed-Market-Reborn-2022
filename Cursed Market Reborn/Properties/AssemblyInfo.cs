@@ -10,8 +10,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SERVERNAME")]
-[assembly: AssemblyProduct("Spotify")]
-[assembly: AssemblyCopyright("Cranch The Wolf")]
+[assembly: AssemblyProduct("Cursed Market")]
+[assembly: AssemblyCopyright("SERVERNAME 2022 (Cranch The Wolf)")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
