@@ -12,20 +12,29 @@ namespace Cursed_Market_Reborn
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(WIN32_EXCEPTION);
+            Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Event_ApplicationException);
             Application.Run(new Form1());
         }
 
-        static void WIN32_EXCEPTION(object sender, ThreadExceptionEventArgs e)
+        static void Event_ApplicationException(object sender, ThreadExceptionEventArgs e)
         {
-            MessageBox.Show(e.Exception.Message, "Cursed Market Error Message", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-            WIN32_ADVANCEDEXCEPTION(e);
-        }
+            DialogResult result = Messaging.ShowDialog("Cursed Market Experienced Critical Error!\nDo you Prefer to see Detailed Log?\n\n\"Cancel\" - Don't log this crash", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\{DateTime.Now.ToString("[dd.MM.yyyy HH;mm;ss]")} Cursed Market Crash.txt";
 
-        [Conditional("DEBUG")]
-        static void WIN32_ADVANCEDEXCEPTION(ThreadExceptionEventArgs e)
-        {
-            MessageBox.Show(e.Exception.ToString(), "Cursed Market Debug Error Information", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            switch (result)
+            {
+                case DialogResult.Yes:
+                    System.IO.File.WriteAllText(path, e.Exception.ToString());
+                    Process.Start(path);
+                    break;
+
+                case DialogResult.No:
+                    Messaging.ShowMessage(e.Exception.Message, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }

@@ -105,42 +105,5 @@ namespace Cursed_Market_Reborn
                 });
             }
         }
-        
-        private async void TRACK_QUEUE()
-        {
-            //    === LENGTH TABLE ===
-            //        4 = NONE
-            //        6 = QUEUED
-            //        7 = MATCHED
-        
-            //try
-            //{
-            //    await Task.Run(() =>
-            //    {
-            //        while (true)
-            //        {
-            //            if (Globals.FIDDLERCORE_VALUE_QUEUEPOSITION == "NONE" || (label1.Text.Length == 7 && Globals.FIDDLERCORE_VALUE_QUEUEPOSITION.Length == 7))
-            //                label1.Invoke(new Action(() => { label1.Text = String.Empty; }));
-            //            else
-            //            {
-            //                if (IsMatchFound == true)
-            //                    label1.Invoke(new Action(() => { label1.Text = String.Empty; }));
-            //                else
-            //                {
-            //                    label1.Invoke(new Action(() => { label1.Text = Globals.FIDDLERCORE_VALUE_QUEUEPOSITION; }));
-            //                    if (Globals.FIDDLERCORE_VALUE_QUEUEPOSITION.Length == 7)
-            //                    {
-            //                        IsMatchFound = true;
-            //                        Thread.Sleep(9000);
-            //                    }
-            //                }
-            //            }
-            //            Thread.Sleep(1000);
-            //        }
-            //
-            //    });
-            //}
-            //catch { TRACK_QUEUE(); }
-        }
     }
 }

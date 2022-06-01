@@ -28,8 +28,7 @@ namespace Cursed_Market_Reborn
 {
     public partial class Form1 : Form
     {
-        ///////////////////////////////// => High Priority Actions
-        NotifyIcon CursedTray = new NotifyIcon();
+        NotifyIcon trayIcon = new NotifyIcon();
         static bool IsProgramInitialized = false;
         static bool IsMarketFileInitialized = false;
         static bool IsSeasonManagerInitialized = false;
@@ -39,7 +38,6 @@ namespace Cursed_Market_Reborn
         {
             InitializeComponent();
             InitializeSettings();
-            int a = WinReg.GetValue_INT32("CrosshairOpacity", 10);
         }
         private async void Form1_Load(object sender, EventArgs e)
         {
@@ -80,12 +78,12 @@ namespace Cursed_Market_Reborn
             try { FiddlerCore.Stop(); }
             catch { WinReg.DisableProxy(); }
         }
-        private void Form1_Handle_Tray(object sender, MouseEventArgs e)
+        private void Event_TrayMouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
                 this.Show();
-                CursedTray.Visible = false;
+                trayIcon.Visible = false;
             }
         }
         private void InitializeSettings()
@@ -232,8 +230,8 @@ namespace Cursed_Market_Reborn
         private void button2_Click(object sender, EventArgs e) => this.WindowState = FormWindowState.Minimized;
         private async void panel1_MouseDown(object sender, MouseEventArgs e)
         {
-            panel1.Capture = false; 
-            
+            panel1.Capture = false;
+
             await Task.Run(() =>
             {
                 Globals_Cache._MAIN.Invoke(new Action(() =>
@@ -246,23 +244,14 @@ namespace Cursed_Market_Reborn
         private void button7_Click(object sender, EventArgs e)
         {
             this.Hide();
-            CursedTray.Icon = Properties.Resources.icon_tray;
-            CursedTray.MouseClick += new MouseEventHandler(Form1_Handle_Tray);
-            CursedTray.Visible = true;
+            trayIcon.Icon = Properties.Resources.icon_tray;
+            trayIcon.MouseClick += new MouseEventHandler(Event_TrayMouseClick);
+            trayIcon.Visible = true;
 
-            using (NotifyIcon Notify = new NotifyIcon())
-            {
-                Notify.BalloonTipTitle = Globals.SelfExecutableName;
-                Notify.BalloonTipText = "Cursed Market Has Been Minimzed To Tray!";
-                Notify.BalloonTipIcon = ToolTipIcon.Info;
-                Notify.Icon = this.Icon;
-                Notify.Visible = true;
-                Notify.ShowBalloonTip(1000);
-                Notify.Dispose();
-            }
+            Messaging.ShowNotify("Program Has Been Minimized To Tray...", "Cursed Market Still Working!\n\nLMB To The Tray Button To Show Up Program.", Properties.Resources.icon_tray);
         }
 
-        ///////////////////////////////// => CranchPalace
+
         private void PerformVersionCheck()
         {
             Networking.CreateNewWebProxyInstance();
@@ -271,7 +260,7 @@ namespace Cursed_Market_Reborn
             {
                 "User-Agent: Cursed Market 2022"
             };
-            var request = Networking.Request.Get_Async($"https://dbd.cranchpalace.info/market/versionCheck?version={Globals.OfflineVersion}", headers).Result;
+            var request = Networking.Request.Get($"https://dbd.cranchpalace.info/market/versionCheck?version={Globals.OfflineVersion}", headers);
             if (request.Item1 != Networking.E_StatusCode.OK)
             {
                 if (Messaging.ShowDialog("Cursed Market Failed To Check Client Version!\nThis Issue Can Be Caused by Running on Your PC Proxy, Disable It? (If Running)", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
@@ -379,7 +368,7 @@ namespace Cursed_Market_Reborn
                 }
             }
 
-            if(IsOffline == false)
+            if (IsOffline == false)
             {
                 switch (DLCOnly)
                 {
@@ -424,7 +413,7 @@ namespace Cursed_Market_Reborn
 
             if (IsOffline == false)
             {
-                var request = Networking.Request.Get_Async("https://dbd.cranchpalace.info/market/fullProfile.json", new string[] { }).Result;
+                var request = Networking.Request.Get("https://dbd.cranchpalace.info/market/fullProfile.json", new string[] { });
                 if (request.Item1 == Networking.E_StatusCode.OK)
                     Globals_Session.fullProfile = request.Item3;
                 else Messaging.ShowMessage("Failed To Obtain fullProfile File!");
@@ -433,10 +422,10 @@ namespace Cursed_Market_Reborn
 
         private void ObtainCatalog()
         {
-            var request = Networking.Request.Get_Async("https://dbd.cranchpalace.info/market/advancedSkinsControl.json", new string[] { }).Result;
+            var request = Networking.Request.Get("https://dbd.cranchpalace.info/market/advancedSkinsControl.json", new string[] { });
             if (request.Item1 == Networking.E_StatusCode.OK)
             {
-                Globals_Session.Complicated.catalog = request.Item3;
+                Globals_Session.Advanced.catalog = request.Item3;
                 Globals.FiddlerCoreTunables.IsCatalogEnabled = true;
 
                 Globals_Cache._MAIN.Invoke(new Action(() =>
@@ -457,7 +446,7 @@ namespace Cursed_Market_Reborn
 
         private void ObtainSeasonManager()
         {
-            var request = Networking.Request.Get_Async("https://dbd.cranchpalace.info/market/seasonManager?check", new string[] { }).Result;
+            var request = Networking.Request.Get("https://dbd.cranchpalace.info/market/seasonManager?check", new string[] { });
             if (request.Item1 == Networking.E_StatusCode.OK)
             {
                 Globals.FiddlerCoreTunables.IsSeasonManagerEnabled = true;
@@ -487,11 +476,11 @@ namespace Cursed_Market_Reborn
 
         private void ObtainKillSwitch()
         {
-            var request = Networking.Request.Get_Async("https://dbd.cranchpalace.info/market/killSwitch.json", new string[] { }).Result;
+            var request = Networking.Request.Get("https://dbd.cranchpalace.info/market/killSwitch.json", new string[] { });
             if (request.Item1 == Networking.E_StatusCode.OK)
             {
                 Globals.FiddlerCoreTunables.IsKillSwitchEnabled = true;
-                Globals_Session.Complicated.killSwitch = request.Item3;
+                Globals_Session.Advanced.killSwitch = request.Item3;
 
                 Globals_Cache._MAIN.Invoke(new Action(() =>
                 {
@@ -507,14 +496,10 @@ namespace Cursed_Market_Reborn
 
 
 
-        ///////////////////////////////// => Main
+
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-            if (FiddlerCore.isRunning == false)
-                Globals_Cache._SETTINGS.ShowDialog();
-
-            else
-                Messaging.ShowMessage("Cursed Market Settings Only Available When It's not Working!\nP.S: \"START\" Button Wasn't Pressed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Globals_Cache._SETTINGS.ShowDialog();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -541,9 +526,13 @@ namespace Cursed_Market_Reborn
                 Globals.FiddlerCoreTunables.IsFullProfileEnabled = true;
             else
             {
-                if (Globals.IsGameRunning() && Globals_Session.bhvrSession != null)
+                var gameRunning = Globals.GetIsGameRunning();
+                if ((gameRunning.Item1 == true) && (Globals_Session.bhvrSession != null))
                 {
-                    Messaging.ShowMessage("Silent SaveFile Can't Be Disabled While Cursed Market In Active Work!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DialogResult result = Messaging.ShowDialog("State of this Feature Can't Be Changed While Game Is Running!\nShall We Close Dead By Daylight?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (result == DialogResult.Yes)
+                        gameRunning.Item2.Kill();
+
                     checkBox2.Checked = true;
                 }
                 else
@@ -635,8 +624,16 @@ namespace Cursed_Market_Reborn
         {
             ObtainMarketFile(checkBox5.Checked);
 
-            if (FiddlerCore.isRunning == true)
-                Messaging.ShowMessage("Changes Was Made When Cursed Market Is Already Running! It's Required to Restart The Game In Case Of Applying Changes...", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (FiddlerCore.GetIsRunning() == true)
+            {
+                var gameRunning = Globals.GetIsGameRunning();
+                if (gameRunning.Item1 == true)
+                {
+                    DialogResult result = Messaging.ShowDialog("Changes We're Made When Game Is Already Running! It's Required to Restart It To See Changes.\nShall We Close Dead By Daylight?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (result == DialogResult.Yes)
+                        gameRunning.Item2.Kill();
+                }
+            }
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -680,7 +677,7 @@ namespace Cursed_Market_Reborn
                         saveDiag.FileName = "Catalog.json";
                         if (saveDiag.ShowDialog() == DialogResult.OK)
                         {
-                            File.WriteAllText(saveDiag.FileName, Globals_Session.Complicated.catalog);
+                            File.WriteAllText(saveDiag.FileName, Globals_Session.Advanced.catalog);
                         }
                     }
                     break;
@@ -693,7 +690,7 @@ namespace Cursed_Market_Reborn
                         saveDiag.FileName = "SpecialEvents.json";
                         if (saveDiag.ShowDialog() == DialogResult.OK)
                         {
-                            File.WriteAllText(saveDiag.FileName, Globals_Session.Complicated.specialEvents);
+                            File.WriteAllText(saveDiag.FileName, Globals_Session.Advanced.specialEvents);
                         }
                     }
                     break;
@@ -706,7 +703,7 @@ namespace Cursed_Market_Reborn
                         saveDiag.FileName = "ItemKillSwitch.json";
                         if (saveDiag.ShowDialog() == DialogResult.OK)
                         {
-                            File.WriteAllText(saveDiag.FileName, Globals_Session.Complicated.specialEvents);
+                            File.WriteAllText(saveDiag.FileName, Globals_Session.Advanced.specialEvents);
                         }
                     }
                     break;
@@ -773,7 +770,7 @@ namespace Cursed_Market_Reborn
                     var request = Networking.Request.Get($"https://dbd.cranchpalace.info/market/seasonManager?specifiedSeason={comboBox3.SelectedIndex - 1}", new string[] { });
                     if (request.Item1 == Networking.E_StatusCode.OK)
                     {
-                        Globals_Session.Complicated.specialEvents = request.Item3;
+                        Globals_Session.Advanced.specialEvents = request.Item3;
                         Globals.FiddlerCoreTunables.IsSeasonManagerEnabled = true;
                     }
                     else

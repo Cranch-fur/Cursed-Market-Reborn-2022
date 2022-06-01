@@ -10,7 +10,7 @@ namespace Cursed_Market_Reborn
     {
         ///////////////////////////////// => High Priority Variables
         public static readonly string SelfExecutableName = AppDomain.CurrentDomain.FriendlyName;
-        public const string OfflineVersion = "4002";
+        public const string OfflineVersion = "4003";
         public static DateTime NETDateTime { get; private set; }
 
 
@@ -67,7 +67,8 @@ namespace Cursed_Market_Reborn
             return output;
         }
 
-        public static bool IsGameRunning()
+        
+        public static Process GetGameProcess()
         {
             Process[] pList = Process.GetProcesses();
             if (pList.Length > 0)
@@ -75,12 +76,23 @@ namespace Cursed_Market_Reborn
                 foreach (Process p in pList)
                 {
                     if (p.ProcessName.Contains("DeadByDaylight-"))
-                        return true;
+                        return p;
                 }
             }
 
-            return false;
+            return null;
         }
+        public static Tuple<bool, Process> GetIsGameRunning()
+        {
+            Process gameProcess = GetGameProcess();
+
+            if (gameProcess == null)
+                Tuple.Create(false, gameProcess);
+
+            return Tuple.Create(true, gameProcess);
+        }
+
+
 
         public static void UpdateQueuePositionInfoFromServerResponse(string response)
         {
@@ -105,28 +117,5 @@ namespace Cursed_Market_Reborn
             Globals_Cache._OVERLAY.UpdateQueueStatus(matched, position);
             Globals_Cache._MAIN.UpdateQueueStatus(matched, position);
         }
-
-        //public static string FIDDLERCORE_VALUETRANSFER_QUEUEPOSITION(string input)
-        //{
-        //    if (FIDDLERCORE_VALUE_QUEUEPOSITION != null)
-        //    {
-        //        try
-        //        {
-        //            var JsQueueResponse = JObject.Parse(input);
-        //            if ((string)JsQueueResponse["status"] == "QUEUED")
-        //                return (string)JsQueueResponse["queueData"]["position"];
-        //            else if ((string)JsQueueResponse["status"] == "MATCHED")
-        //            {
-        //                FIDDLERCORE_VALUE_CURRENTMATCHID = (string)JsQueueResponse["matchData"]["matchId"];
-        //                Overlay.IsMMRObtained = false;
-        //                return "MATCHED";
-        //            }
-        //            else
-        //                return "NONE";
-        //        }
-        //        catch { return "NONE"; }
-        //    }
-        //    else return "NONE";
-        //}
     }
 }

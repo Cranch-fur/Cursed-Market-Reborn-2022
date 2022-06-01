@@ -19,5 +19,24 @@ namespace Cursed_Market_Reborn
         {
             return MessageBox.Show(message, Globals.SelfExecutableName, messageButtons, messageType, defaultButton);
         }
+
+        public static void ShowNotify(string title,
+            string message,
+                System.Drawing.Icon notifyIcon,
+                    ToolTipIcon tooltipIcon = ToolTipIcon.None)
+        {
+            NotifyIcon winNotify = new NotifyIcon();
+            winNotify.Visible = true;
+            winNotify.Icon = notifyIcon;
+
+
+            winNotify.BalloonTipTitle = title;
+            winNotify.BalloonTipText = message;
+            winNotify.BalloonTipIcon = tooltipIcon;
+
+            winNotify.ShowBalloonTip(3000);
+
+            winNotify.BalloonTipClosed += (sender, e) => winNotify.Dispose();
+        }
     }
 }

@@ -1,15 +1,14 @@
 ﻿using CranchyLib.Networking;
 using Fiddler;
-using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Cursed_Market_Reborn
 {
     public static class FiddlerCore
     {
-        public static bool isRunning = false;
+        public static string rootCertificatePath = $"{Networking.Utilities.Windows.SE_WinFolder.Appdata_Roaming}\\CursedMarket_RootCertificate.p12";
+        public static string rootCertificatePassword = "B99fceaaa1f3b2458ccae74fb734cb76";
 
         static FiddlerCore()
         {
@@ -22,8 +21,6 @@ namespace Cursed_Market_Reborn
             BCCertMaker.BCCertMaker certProvider = new BCCertMaker.BCCertMaker();
             CertMaker.oCertProvider = certProvider;
 
-            string rootCertificatePath = $"{Networking.Utilities.Windows.SE_WinFolder.Appdata_Roaming}\\CursedMarket_RootCertificate.p12";
-            string rootCertificatePassword = "B99fceaaa1f3b2458ccae74fb734cb76";
             if (!File.Exists(rootCertificatePath))
             {
                 certProvider.CreateRootCertificate();
@@ -39,15 +36,14 @@ namespace Cursed_Market_Reborn
             return true;
 
         }
-        public static bool RemoveRootCertificate()
+        public static bool DestroyRootCertificates()
         {
-            try
-            {
-                CertMaker.removeFiddlerGeneratedCerts(true);
-                return true;
-            }
-            catch { return false; }
+            CertMaker.removeFiddlerGeneratedCerts(true);
+            return true;
         }
+
+
+
         public static bool Start()
         {
             if (EnsureRootCertificate())
@@ -57,8 +53,9 @@ namespace Cursed_Market_Reborn
         public static void Stop()
         {
             FiddlerApplication.Shutdown();
-            WinReg.DisableProxy();
         }
+        public static bool GetIsRunning() { return FiddlerApplication.IsStarted(); }
+
 
 
         private static void PerformFakeGameRequest(string url)
@@ -73,7 +70,7 @@ namespace Cursed_Market_Reborn
                 $"x-kraken-client-version: {Globals_Session.Game.client_version}",
                 "x-kraken-check: True"
             };
-            Networking.Request.Get_Async(url, headers);
+            Networking.Request.Get(url, headers);
         }
 
         public static void FiddlerToCatchBeforeRequest(Session oSession)
@@ -124,7 +121,7 @@ namespace Cursed_Market_Reborn
                     {
                         oSession.utilCreateResponseAndBypassServer();
                         oSession.utilSetResponseBody(Globals.GetValidMarketFile());
-                        PerformFakeGameRequest(oSession.url);
+                        PerformFakeGameRequest(oSession.fullUrl);
 
 
                         return;
@@ -143,7 +140,7 @@ namespace Cursed_Market_Reborn
                         if (oSession.uriContains("/catalog.json"))
                         {
                             oSession.utilCreateResponseAndBypassServer();
-                            oSession.utilSetResponseBody(Globals_Session.Complicated.catalog);
+                            oSession.utilSetResponseBody(Globals_Session.Advanced.catalog);
                             return;
                         }
                     }
@@ -160,7 +157,7 @@ namespace Cursed_Market_Reborn
                         if (oSession.uriContains("/specialEventsContent.json"))
                         {
                             oSession.utilCreateResponseAndBypassServer();
-                            oSession.utilSetResponseBody(Globals_Session.Complicated.specialEvents);
+                            oSession.utilSetResponseBody(Globals_Session.Advanced.specialEvents);
                             return;
                         }
                     }
@@ -177,7 +174,7 @@ namespace Cursed_Market_Reborn
                         if (oSession.uriContains("/itemsKillswitch.json"))
                         {
                             oSession.utilCreateResponseAndBypassServer();
-                            oSession.utilSetResponseBody(Globals_Session.Complicated.killSwitch);
+                            oSession.utilSetResponseBody(Globals_Session.Advanced.killSwitch);
                             return;
                         }
                     }
@@ -192,7 +189,7 @@ namespace Cursed_Market_Reborn
                             oSession.oResponse["Kraken-State-Version"] = "1";
                             oSession.oResponse["Kraken-State-Schema-Version"] = "0";
                             oSession.utilSetResponseBody(Globals.GetValidFullProfile());
-                            PerformFakeGameRequest(oSession.url);
+                            PerformFakeGameRequest(oSession.fullUrl);
 
 
                             return;
@@ -273,7 +270,7 @@ namespace Cursed_Market_Reborn
                         oSession.utilDecodeResponse();
                         string responseBody = oSession.GetResponseBodyAsString();
 
-                        if(responseBody != string.Empty)
+                        if (responseBody != string.Empty)
                             Globals.UpdateQueuePositionInfoFromServerResponse(oSession.GetResponseBodyAsString());
 
                         return;

@@ -11,7 +11,7 @@
             Switch = 8,
             PS4 = 16,
             Steam = 32,
-            Steam_PrivateServer = 33,
+            Steam_PrivateServer,
             Steam_PTB = 48,
             WinGDK = 64,
             Xbox = 128,
@@ -38,6 +38,12 @@
                         "steam.live.bhvrdbd.com",
                         "cdn.live.dbd.bhvronline.com",
                         "cdn.live.bhvrdbd.com"
+                    };
+
+                case E_GamePlatform.Steam_PrivateServer:
+                    return new string[]
+                    {
+                        "dbdserver.archengius.dev"
                     };
 
                 case E_GamePlatform.Steam_PTB:
@@ -79,6 +85,9 @@
                 case "steam.live.bhvrdbd.com":
                     return E_GamePlatform.Steam;
 
+                case "dbdserver.archengius.dev":
+                    return E_GamePlatform.Steam_PrivateServer;
+
                 case "latest.ptb.bhvrdbd.com":
                     return E_GamePlatform.Steam_PTB;
 
@@ -105,7 +114,10 @@
 
 
             "latest.ptb.bhvrdbd.com",
-            "cdn.ptb.dbd.bhvronline.com"
+            "cdn.ptb.dbd.bhvronline.com",
+
+
+            "dbdserver.archengius.dev"
         };
 
 
@@ -117,7 +129,7 @@
         public static string market = Properties.Resources.Offline_inventories;
         public static string fullProfile = Properties.Resources.Offline_fullProfile;
 
-        public static class Complicated
+        public static class Advanced
         {
             public static string catalog = null;
             public static string specialEvents = null;

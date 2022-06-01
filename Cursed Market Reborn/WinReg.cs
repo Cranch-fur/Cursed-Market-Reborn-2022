@@ -1,16 +1,19 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Linq;
 
 namespace Cursed_Market_Reborn
 {
     public static class WinReg
     {
-        public const string RegistryPath = @"HKEY_CURRENT_USER\SOFTWARE\Cursed Market 2022";
+        public const string fullRegistryPath = @"HKEY_CURRENT_USER\SOFTWARE\Cursed Market 2022";
+        public const string RegistryPath = @"SOFTWARE\Cursed Market 2022";
+
 
         public static string GetValue(string DWORD32, string DefaultReturn = null)
         {
 
-            object value = Registry.GetValue(RegistryPath, DWORD32, DefaultReturn);
+            object value = Registry.GetValue(fullRegistryPath, DWORD32, DefaultReturn);
             if (value != null)
                 return Convert.ToString(value);
             else return DefaultReturn;
@@ -18,7 +21,7 @@ namespace Cursed_Market_Reborn
 
         public static int GetValue_INT32(string DWORD32, int DefaultReturn = 0)
         {
-            object value = Registry.GetValue(RegistryPath, DWORD32, DefaultReturn);
+            object value = Registry.GetValue(fullRegistryPath, DWORD32, DefaultReturn);
             if (value != null)
                 return Convert.ToInt32(value);
             else return DefaultReturn;
@@ -27,8 +30,8 @@ namespace Cursed_Market_Reborn
         public static bool SetValue(string DWORD32, string VALUE)
         {
             try
-            { 
-                Registry.SetValue(RegistryPath, DWORD32, VALUE); return true; 
+            {
+                Registry.SetValue(fullRegistryPath, DWORD32, VALUE); return true;
             }
             catch { return false; }
         }
@@ -36,8 +39,20 @@ namespace Cursed_Market_Reborn
         public static bool SetValue_INT32(string DWORD32, int VALUE)
         {
             try
-            { 
-                Registry.SetValue(RegistryPath, DWORD32, VALUE); return true; 
+            {
+                Registry.SetValue(fullRegistryPath, DWORD32, VALUE); return true;
+            }
+            catch { return false; }
+        }
+
+        public static bool DestroyCurrentUserSubKeyTree(string PATH)
+        {
+            try
+            {
+                if (Registry.CurrentUser.GetSubKeyNames().Contains(PATH))
+                    Registry.CurrentUser.DeleteSubKeyTree(PATH);
+
+                return true;
             }
             catch { return false; }
         }
