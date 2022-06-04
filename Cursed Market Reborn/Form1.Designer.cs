@@ -72,6 +72,7 @@ namespace Cursed_Market_Reborn
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
@@ -407,6 +408,7 @@ namespace Cursed_Market_Reborn
             // 
             // pictureBox2
             // 
+            this.pictureBox2.Cursor = System.Windows.Forms.Cursors.Help;
             this.pictureBox2.Image = global::Cursed_Market_Reborn.Properties.Resources.ICON_SMALL_SETTINGS_BLACK;
             this.pictureBox2.Location = new System.Drawing.Point(12, 539);
             this.pictureBox2.Name = "pictureBox2";
@@ -462,14 +464,13 @@ namespace Cursed_Market_Reborn
             // 
             // label8
             // 
-            this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Roboto", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label8.ForeColor = System.Drawing.Color.Gainsboro;
-            this.label8.Location = new System.Drawing.Point(113, 541);
+            this.label8.Location = new System.Drawing.Point(150, 541);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(432, 13);
+            this.label8.Size = new System.Drawing.Size(360, 13);
             this.label8.TabIndex = 31;
-            this.label8.Text = "SERVERNAME 2021 RELEASE | MADE BY CRANCH (КРАНЧ) THE WOLF, WITH SIZZER";
+            this.label8.Text = "SERVERNAME 2022 RELEASE | MADE BY CRANCH (КРАНЧ) THE WOLF";
             // 
             // textBox5
             // 
@@ -608,12 +609,24 @@ namespace Cursed_Market_Reborn
             this.comboBox1.TabIndex = 43;
             this.comboBox1.Visible = false;
             // 
+            // label11
+            // 
+            this.label11.Font = new System.Drawing.Font("Roboto", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label11.ForeColor = System.Drawing.Color.Gainsboro;
+            this.label11.Location = new System.Drawing.Point(150, 555);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(360, 14);
+            this.label11.TabIndex = 44;
+            this.label11.Text = "X.X.X.X";
+            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(659, 583);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.comboBox3);
@@ -719,6 +732,7 @@ namespace Cursed_Market_Reborn
         private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label11;
     }
 }
 

@@ -7,8 +7,8 @@ namespace Cursed_Market_Reborn
 {
     public static class FiddlerCore
     {
-        public static string rootCertificatePath = $"{Networking.Utilities.Windows.SE_WinFolder.Appdata_Roaming}\\CursedMarket_RootCertificate.p12";
-        public static string rootCertificatePassword = "B99fceaaa1f3b2458ccae74fb734cb76";
+        public static string rootCertificatePath = $"{Globals.SelfDataFolder}\\CursedMarket_RootCertificate.p12";
+        public const string rootCertificatePassword = "B99fceaaa1f3b2458ccae74fb734cb76";
 
         static FiddlerCore()
         {
@@ -75,14 +75,8 @@ namespace Cursed_Market_Reborn
 
         public static void FiddlerToCatchBeforeRequest(Session oSession)
         {
-            if (oSession.uriContains("/api/v1/config"))
+            if (oSession.uriContains("/login?token="))
             {
-                if (oSession.oRequest["Cookie"].Length > 0)
-                {
-                    Globals_Session.bhvrSession = oSession.oRequest["Cookie"].Replace("bhvrSession=", string.Empty);
-                    Globals_Cache._MAIN.UpdateBhvrSession();
-                }
-
                 if (oSession.oRequest["User-Agent"].Length > 0)
                     Globals_Session.Game.user_agent = oSession.oRequest["User-Agent"];
 
@@ -98,25 +92,43 @@ namespace Cursed_Market_Reborn
                 if (oSession.oRequest["x-kraken-client-version"].Length > 0)
                     Globals_Session.Game.client_version = oSession.oRequest["x-kraken-client-version"];
 
-                Globals_Session.platformRunning = Globals_Session.GetRunningPlatformFromHostName(oSession.hostname);
 
+                Globals_Session.platformRunning = Globals_Session.GetRunningPlatformFromHostName(oSession.hostname);
+                switch (Globals_Session.platformRunning)
+                {
+                    case Globals_Session.E_GamePlatform.Steam:
+                        Globals_Session.UID = Globals.ObtainUIDFromSteamAuthTicket(oSession.url.ToString());
+                        break;
+
+                    case Globals_Session.E_GamePlatform.Steam_PTB:
+                        Globals_Session.UID = Globals.ObtainUIDFromSteamAuthTicket(oSession.url.ToString());
+                        break;
+
+                    case Globals_Session.E_GamePlatform.Steam_PrivateServer:
+                        Globals_Session.UID = Globals.ObtainUIDFromSteamAuthTicket(oSession.url.ToString());
+                        break;
+                }
+                return;
+            }
+
+
+            if (oSession.uriContains("/api/v1/config"))
+            {
+                if (oSession.oRequest["Cookie"].Length > 0)
+                {
+                    Globals_Session.bhvrSession = oSession.oRequest["Cookie"].Replace("bhvrSession=", string.Empty);
+                    Globals_Cache._MAIN.UpdateBhvrSession();
+                }
 
                 return;
             }
+
+
 
             if (Globals_Session.GetRunningPlatformHostNames().Contains(oSession.hostname))
             {
                 if (oSession.oRequest["x-kraken-check"] != "True")
                 {
-                    if (oSession.uriContains("/api/v1/auth/provider/steam/login?token="))
-                    {
-                        Globals_Session.UID = Globals.ObtainUIDFromSteamAuthTicket(oSession.url.ToString());
-
-
-                        return;
-                    }
-
-
                     if (oSession.uriContains("/api/v1/inventories"))
                     {
                         oSession.utilCreateResponseAndBypassServer();
@@ -199,7 +211,7 @@ namespace Cursed_Market_Reborn
                         if (oSession.uriContains("/api/v1/players/me/states/binary?schemaVersion"))
                         {
                             oSession.utilCreateResponseAndBypassServer();
-                            oSession.utilSetResponseBody("{\"version\":1,\"stateName\":\"FullProfile\",\"schemaVersion\":0,\"playerId\":\"" + Globals_Session.playerId + "\"}");
+                            oSession.utilSetResponseBody("{\"version\":1,\"stateName\":\"FullProfile\",\"schemaVersion\":0,\"playerId\":\"" + Globals_Session.userId + "\"}");
                             return;
                         }
                     }
@@ -244,13 +256,6 @@ namespace Cursed_Market_Reborn
                             return;
                         }
                     }
-
-
-                    if (oSession.uriContains("api/v1/friends/richPresence"))
-                    {
-                        Globals_Session.playerId = oSession.url.Remove(0, oSession.url.LastIndexOf("/") + 1);
-                        return;
-                    }
                 }
 
             }
@@ -262,10 +267,16 @@ namespace Cursed_Market_Reborn
             {
                 if (oSession.oRequest["x-kraken-check"] != "True")
                 {
-                    if (oSession.fullUrl.EndsWith("/api/v1/queue"))
+                    if (oSession.uriContains("/api/v1/queue"))
                     {
-                        if (oSession.uriContains("/cancel"))
+                        if (oSession.fullUrl.EndsWith("/token/issue"))
+                            return;
+
+                        if (oSession.fullUrl.EndsWith("/cancel"))
+                        {
                             Globals.UpdateQueuePositionInfo(false, -2);
+                            return;
+                        }
 
                         oSession.utilDecodeResponse();
                         string responseBody = oSession.GetResponseBodyAsString();
@@ -274,6 +285,13 @@ namespace Cursed_Market_Reborn
                             Globals.UpdateQueuePositionInfoFromServerResponse(oSession.GetResponseBodyAsString());
 
                         return;
+                    }
+
+
+                    if (oSession.uriContains("/login?token="))
+                    {
+                        oSession.utilDecodeResponse();
+                        Globals_Session.userId = Globals.ObtainUserIdFromAuthResponse(oSession.GetResponseBodyAsString());
                     }
                 }
             }

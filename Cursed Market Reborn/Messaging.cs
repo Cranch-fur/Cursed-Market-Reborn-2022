@@ -9,7 +9,7 @@ namespace Cursed_Market_Reborn
                 MessageBoxIcon messageType = MessageBoxIcon.None, 
                     MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1)
         {
-            MessageBox.Show(message, Globals.SelfExecutableName, messageButtons, messageType, defaultButton);
+            MessageBox.Show(message, Globals.SelfExecutableFriendlyName, messageButtons, messageType, defaultButton);
         }
 
         public static DialogResult ShowDialog(string message,
@@ -17,7 +17,7 @@ namespace Cursed_Market_Reborn
                 MessageBoxIcon messageType = MessageBoxIcon.None,
                     MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1)
         {
-            return MessageBox.Show(message, Globals.SelfExecutableName, messageButtons, messageType, defaultButton);
+            return MessageBox.Show(message, Globals.SelfExecutableFriendlyName, messageButtons, messageType, defaultButton);
         }
 
         public static void ShowNotify(string title,

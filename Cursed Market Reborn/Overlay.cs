@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Media;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,8 +13,8 @@ namespace Cursed_Market_Reborn
         static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
         [DllImport("user32.dll", SetLastError = true)]
         static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-        
-        
+
+
         public Overlay()
         {
             InitializeComponent();
@@ -24,7 +23,7 @@ namespace Cursed_Market_Reborn
             this.Height = Screen.PrimaryScreen.Bounds.Height;
             label1.Location = new Point(this.Width / 128, this.Height / 128);
         }
-        
+
 
         private void Overlay_Load(object sender, EventArgs e)
         {
@@ -32,7 +31,7 @@ namespace Cursed_Market_Reborn
             this.ShowInTaskbar = false;
             this.TransparencyKey = Color.DarkSlateGray;
             this.TopMost = true;
-        
+
             int initialStyle = GetWindowLong(this.Handle, -20);
             SetWindowLong(this.Handle, -20, initialStyle | 0x80000 | 0x20);
         }
@@ -49,19 +48,19 @@ namespace Cursed_Market_Reborn
                     label1.ForeColor = Color.White;
                     label1.BackColor = Color.FromArgb(255, 46, 51, 73);
                     break;
-        
+
                 case "DarkMemories":
                     label1.ForeColor = Color.White;
                     label1.BackColor = Color.FromArgb(255, 44, 47, 51);
                     break;
-        
+
                 case "SaintsInaRow":
                     label1.ForeColor = Color.FromArgb(255, 146, 71, 214);
                     label1.BackColor = Color.FromArgb(255, 37, 13, 57);
                     break;
             }
         }
-        
+
         private void Overlay_FormClosing(object sender, FormClosingEventArgs e) => e.Cancel = true;
 
         public async void UpdateQueueStatus(bool wasMatchFound, int queuePosition = 0)
@@ -75,8 +74,7 @@ namespace Cursed_Market_Reborn
                         Globals_Cache._OVERLAY.Invoke(new Action(() =>
                         {
                             label1.Text = "MATCH FOUND";
-                            SoundPlayer sPlayer = new SoundPlayer(Properties.Resources.ES_Gong_Hit);
-                            sPlayer.Play();
+
                         }));
                     }
                     else

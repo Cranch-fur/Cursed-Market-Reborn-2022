@@ -123,7 +123,7 @@
 
 
         public static string bhvrSession = null;
-        public static string playerId = null;
+        public static string userId = null;
         public static string UID = null;
 
         public static string market = Properties.Resources.Offline_inventories;
@@ -149,6 +149,11 @@
         {
             public static string ID = null;
             public static int QueuePosition = 0;
+        }
+
+        public static class Creator
+        {
+            public static string Discord = null;
         }
     }
 }

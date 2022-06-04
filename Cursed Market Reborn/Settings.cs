@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Media;
@@ -19,6 +20,9 @@ namespace Cursed_Market_Reborn
         private void Form2_Load(object sender, EventArgs e)
         {
             ObtainLimitedPlatforms();
+
+            if (Globals_Session.Creator.Discord != null)
+                pictureBox5.Visible = true;
         }
         private void InitializeSettings()
         {
@@ -33,6 +37,8 @@ namespace Cursed_Market_Reborn
                     label3.ForeColor = Color.Black;
                     label4.ForeColor = Color.Black;
                     label5.ForeColor = Color.Black;
+                    label6.ForeColor = Color.Black;
+                    pictureBox5.Image = Properties.Resources.ICON_SMALL_DISCORD_BLACK;
                     break;
 
                 case "Legacy":
@@ -44,6 +50,8 @@ namespace Cursed_Market_Reborn
                     label3.ForeColor = Color.White;
                     label4.ForeColor = Color.White;
                     label5.ForeColor = Color.White;
+                    label6.ForeColor = Color.White;
+                    pictureBox5.Image = Properties.Resources.ICON_SMALL_DISCORD_WHITE;
                     break;
 
                 case "DarkMemories":
@@ -55,6 +63,8 @@ namespace Cursed_Market_Reborn
                     label3.ForeColor = Color.White;
                     label4.ForeColor = Color.White;
                     label5.ForeColor = Color.White;
+                    label6.ForeColor = Color.White;
+                    pictureBox5.Image = Properties.Resources.ICON_SMALL_DISCORD_WHITE;
                     break;
 
                 case "SaintsInaRow":
@@ -66,6 +76,32 @@ namespace Cursed_Market_Reborn
                     label3.ForeColor = Color.White;
                     label4.ForeColor = Color.White;
                     label5.ForeColor = Color.White;
+                    label6.ForeColor = Color.White;
+                    pictureBox5.Image = Properties.Resources.ICON_SMALL_DISCORD_WHITE;
+                    break;
+            }
+
+
+            switch (Globals.Program.SelectedQueueNotifySound)
+            {
+                default:
+                    comboBox3.SelectedIndex = 0;
+                    break;
+
+                case "ES_Gong":
+                    comboBox3.SelectedIndex = 1;
+                    break;
+
+                case "ES_Xylophone":
+                    comboBox3.SelectedIndex = 2;
+                    break;
+
+                case "ES_Applause":
+                    comboBox3.SelectedIndex = 3;
+                    break;
+
+                case "ES_Nice":
+                    comboBox3.SelectedIndex = 4;
                     break;
             }
         }
@@ -74,7 +110,13 @@ namespace Cursed_Market_Reborn
         private void button1_Click(object sender, EventArgs e)
         {
             if (HasAnythingChanged == true)
+            {
+                var gameProcess = Globals.GetIsGameRunning();
+                if (gameProcess.Item1 == true)
+                    gameProcess.Item2.Kill();
+
                 Application.Restart();
+            }
             else this.Close();
         }
         private async void panel1_MouseDown(object sender, MouseEventArgs e)
@@ -146,14 +188,15 @@ namespace Cursed_Market_Reborn
         private void button5_Click(object sender, EventArgs e)
         {
             WinReg.DisableProxy();
-            SoundPlayer sPlayer = new SoundPlayer(Properties.Resources.ES_Gong_Hit);
+
+            SoundPlayer sPlayer = new SoundPlayer(Properties.Resources.ES_Gong);
             sPlayer.Play();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            textBox1.Text = Globals_Session.playerId ?? "NONE";
-            textBox2.Text = Globals_Session.UID ?? "NONE";
+            textBox1.Text = Globals_Session.userId   ?? "NONE";
+            textBox2.Text = Globals_Session.UID      ?? "NONE";
         }
 
         private void ObtainLimitedPlatforms()
@@ -178,5 +221,40 @@ namespace Cursed_Market_Reborn
                 ObtainLimitedPlatforms();
             }
         }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (comboBox3.SelectedIndex)
+            {
+                default:
+                    WinReg.SetValue("SelectedQueueNotifySound", "None");
+                    Globals.Program.SelectedQueueNotifySound = "None";
+                    break;
+
+                case 1:
+                    WinReg.SetValue("SelectedQueueNotifySound", "ES_Gong");
+                    Globals.Program.SelectedQueueNotifySound = "ES_Gong";
+                    break;
+
+                case 2:
+                    WinReg.SetValue("SelectedQueueNotifySound", "ES_Xylophone");
+                    Globals.Program.SelectedQueueNotifySound = "ES_Xylophone";
+                    break;
+
+                case 3:
+                    WinReg.SetValue("SelectedQueueNotifySound", "ES_Applause");
+                    Globals.Program.SelectedQueueNotifySound = "ES_Applause";
+                    break;
+
+                case 4:
+                    WinReg.SetValue("SelectedQueueNotifySound", "ES_Nice");
+                    Globals.Program.SelectedQueueNotifySound = "ES_Nice";
+                    break;
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e) => Globals.PlayQueueNotifySound(Globals.Program.SelectedQueueNotifySound);
+
+        private void pictureBox5_Click(object sender, EventArgs e) => Process.Start(Globals_Session.Creator.Discord);
     }
 }

@@ -38,6 +38,7 @@ namespace Cursed_Market_Reborn
         {
             InitializeComponent();
             InitializeSettings();
+            Globals.EnsureSelfDataFolderExists();
         }
         private async void Form1_Load(object sender, EventArgs e)
         {
@@ -88,6 +89,8 @@ namespace Cursed_Market_Reborn
         }
         private void InitializeSettings()
         {
+            label11.Text = $"{Globals.OfflineVersion[0]}.{Globals.OfflineVersion[1]}.{Globals.OfflineVersion[2]}.{Globals.OfflineVersion[3]}";
+
             comboBox2.SelectedItem = Globals.Crosshair.SelectedCrosshair;
             trackBar1.Value = Globals.Crosshair.Opacity;
             label9.Text = Convert.ToString(trackBar1.Value * 10) + "%";
@@ -112,6 +115,7 @@ namespace Cursed_Market_Reborn
                         label8.ForeColor = Color.Gainsboro;
                         label9.ForeColor = Color.Black;
                         label10.ForeColor = Color.Black;
+                        label11.ForeColor = Color.Gainsboro;
                         checkBox1.ForeColor = Color.Black;
                         checkBox2.ForeColor = Color.Black;
                         checkBox3.ForeColor = Color.Black;
@@ -144,6 +148,7 @@ namespace Cursed_Market_Reborn
                         label8.ForeColor = Color.DimGray;
                         label9.ForeColor = Color.White;
                         label10.ForeColor = Color.White;
+                        label11.ForeColor = Color.DimGray;
                         checkBox1.ForeColor = Color.White;
                         checkBox2.ForeColor = Color.White;
                         checkBox3.ForeColor = Color.White;
@@ -176,6 +181,7 @@ namespace Cursed_Market_Reborn
                         label8.ForeColor = Color.DimGray;
                         label9.ForeColor = Color.White;
                         label10.ForeColor = Color.White;
+                        label11.ForeColor = Color.DimGray;
                         checkBox1.ForeColor = Color.White;
                         checkBox2.ForeColor = Color.White;
                         checkBox3.ForeColor = Color.White;
@@ -208,6 +214,7 @@ namespace Cursed_Market_Reborn
                         label8.ForeColor = Color.DimGray;
                         label9.ForeColor = Color.White;
                         label10.ForeColor = Color.White;
+                        label11.ForeColor = Color.DimGray;
                         checkBox1.ForeColor = Color.White;
                         checkBox2.ForeColor = Color.White;
                         checkBox3.ForeColor = Color.White;
@@ -255,6 +262,16 @@ namespace Cursed_Market_Reborn
         private void PerformVersionCheck()
         {
             Networking.CreateNewWebProxyInstance();
+            try
+            {
+                Networking.Request.Get($"https://dbd.cranchpalace.info/market/heartBeat", new string[] { });
+            }
+            catch (NullReferenceException e)
+            {
+                Messaging.ShowMessage("Cursed Market Failder To Create GET Request!\nSomething on Your PC Prevents Cursed Market Ethernet Connection, However, Sometimes It Can Be Bypassed Using VPN (This isn't Real Solution)");
+                goto VersionCheckFail;
+            }
+
 
             string[] headers =
             {
@@ -281,7 +298,7 @@ namespace Cursed_Market_Reborn
             JObject json = JObject.Parse(request.Item3);
             if ((bool)json["isLatest"] == false)
             {
-                if (Messaging.ShowDialog($"New Version Of Cursed Market is Available! Download It?\nCurrent Version: {Globals.OfflineVersion}\nLatest Version: {json["onlineVersion"]}", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (Messaging.ShowDialog($"New Version Of Cursed Market is Available! Download It?\nCurrent Version: {Globals.OfflineVersion}\nLatest Version: {json["onlineVersion"]}\n\nSave To: {Networking.Utilities.Windows.SE_WinFolder.Downloads}", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     var download = Networking.Request.Download((string)json["Download"], Networking.Utilities.Windows.SE_WinFolder.Downloads);
                     if (download.Item1 == false)
@@ -299,6 +316,9 @@ namespace Cursed_Market_Reborn
                     }
                 }
             }
+
+            if (json.ContainsKey("Discord"))
+                Globals_Session.Creator.Discord = (string)json["Discord"];
 
             if ((bool)json["inventories"]["enabled"] == true)
                 ObtainMarketFile();
@@ -788,6 +808,7 @@ namespace Cursed_Market_Reborn
                 Globals_Cache._MAIN.Invoke(new Action(() =>
                 {
                     label5.Text = "QUEUE POSITION: MATCH FOUND";
+                    Globals.PlayQueueNotifySound(Globals.Program.SelectedQueueNotifySound);
                 }));
             }
             else

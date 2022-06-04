@@ -187,6 +187,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="LOGO_Icon.ico" />
+    <None Include="Resources\ICON_SMALL_DISCORD_BLACK.png" />
+    <None Include="Resources\ICON_SMALL_DISCORD_WHITE.png" />
+    <None Include="Resources\ES_Xylophone Melody 1.wav" />
+    <None Include="Resources\ES_Voice Clip Male 289.wav" />
+    <None Include="Resources\ES_Applause Crowd.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

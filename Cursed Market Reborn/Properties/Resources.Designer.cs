@@ -133,9 +133,36 @@ namespace Cursed_Market_Reborn.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.IO.UnmanagedMemoryStream, аналогичного System.IO.MemoryStream.
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream ES_Gong_Hit {
+        internal static System.IO.UnmanagedMemoryStream ES_Applause {
             get {
-                return ResourceManager.GetStream("ES_Gong_Hit", resourceCulture);
+                return ResourceManager.GetStream("ES_Applause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.IO.UnmanagedMemoryStream, аналогичного System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ES_Gong {
+            get {
+                return ResourceManager.GetStream("ES_Gong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.IO.UnmanagedMemoryStream, аналогичного System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ES_Nice {
+            get {
+                return ResourceManager.GetStream("ES_Nice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.IO.UnmanagedMemoryStream, аналогичного System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ES_Xylophone {
+            get {
+                return ResourceManager.GetStream("ES_Xylophone", resourceCulture);
             }
         }
         
@@ -155,6 +182,26 @@ namespace Cursed_Market_Reborn.Properties {
         internal static System.Drawing.Bitmap ICON_SMALL_BLOODPOINTS {
             get {
                 object obj = ResourceManager.GetObject("ICON_SMALL_BLOODPOINTS", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ICON_SMALL_DISCORD_BLACK {
+            get {
+                object obj = ResourceManager.GetObject("ICON_SMALL_DISCORD_BLACK", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ICON_SMALL_DISCORD_WHITE {
+            get {
+                object obj = ResourceManager.GetObject("ICON_SMALL_DISCORD_WHITE", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

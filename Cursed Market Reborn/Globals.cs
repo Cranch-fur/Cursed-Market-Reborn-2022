@@ -1,8 +1,12 @@
-﻿using CranchyLib.SaveFile;
+﻿using CranchyLib.Networking;
+using CranchyLib.SaveFile;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Media;
 
 namespace Cursed_Market_Reborn
 {
@@ -10,7 +14,16 @@ namespace Cursed_Market_Reborn
     {
         ///////////////////////////////// => High Priority Variables
         public static readonly string SelfExecutableName = AppDomain.CurrentDomain.FriendlyName;
-        public const string OfflineVersion = "4003";
+        public static readonly string SelfExecutableFriendlyName = SelfExecutableName.Remove(Globals.SelfExecutableName.Length - 4, 4);
+        public static readonly string SelfDataFolder = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\Cursed Market 2022";
+        public static void EnsureSelfDataFolderExists()
+        {
+            if (Directory.Exists(SelfDataFolder) == false)
+                Directory.CreateDirectory(SelfDataFolder);
+        }
+
+        public const string OfflineVersion = "4005";
+
         public static DateTime NETDateTime { get; private set; }
 
 
@@ -18,6 +31,8 @@ namespace Cursed_Market_Reborn
         {
             public static string SelectedTheme = WinReg.GetValue("SelectedTheme") ?? "DarkMemories";
             public static int SelectedThemeIndex = 0;
+
+            public static string SelectedQueueNotifySound = WinReg.GetValue("SelectedQueueNotifySound") ?? "None";
         }
 
 
@@ -48,7 +63,7 @@ namespace Cursed_Market_Reborn
         public static string GetValidMarketFile()
         {
             JToken json = JObject.Parse(Globals_Session.market);
-            json["data"]["playerId"] = Globals_Session.playerId;
+            json["data"]["playerId"] = Globals_Session.userId;
             return json.ToString();
         }
 
@@ -65,6 +80,18 @@ namespace Cursed_Market_Reborn
             string output = token.Remove(0, token.IndexOf("14", StringComparison.InvariantCulture)).Remove(0, 24);
             output = output.Remove(16, output.Length - 16);
             return output;
+        }
+
+        public static string ObtainUserIdFromAuthResponse(string response)
+        {
+            if (response.IsJson() == false)
+                return null;
+
+            JObject json = JObject.Parse(response);
+            if (json.ContainsKey("userId") == false)
+                return null;
+
+            return (string)json["userId"];
         }
 
         
@@ -87,7 +114,7 @@ namespace Cursed_Market_Reborn
             Process gameProcess = GetGameProcess();
 
             if (gameProcess == null)
-                Tuple.Create(false, gameProcess);
+                return Tuple.Create(false, gameProcess);
 
             return Tuple.Create(true, gameProcess);
         }
@@ -116,6 +143,39 @@ namespace Cursed_Market_Reborn
         {
             Globals_Cache._OVERLAY.UpdateQueueStatus(matched, position);
             Globals_Cache._MAIN.UpdateQueueStatus(matched, position);
+        }
+
+        public static string GetCurrentDateTime()
+        {
+            return DateTime.Now.ToString("[dd.MM.yyyy HH/mm/ss]");
+        }
+
+        public static void PlayQueueNotifySound(string name)
+        {
+            SoundPlayer sPlayer = new SoundPlayer();
+
+            switch (name)
+            {
+                default:
+                    return;
+
+                case "ES_Gong":
+                    sPlayer.Stream = Properties.Resources.ES_Gong;
+                    break;
+
+                case "ES_Xylophone":
+                    sPlayer.Stream = Properties.Resources.ES_Xylophone;
+                    break;
+
+                case "ES_Applause":
+                    sPlayer.Stream = Properties.Resources.ES_Applause;
+                    break;
+
+                case "ES_Nice":
+                    sPlayer.Stream = Properties.Resources.ES_Nice;
+                    break;
+            }
+            sPlayer.Play();
         }
     }
 }
